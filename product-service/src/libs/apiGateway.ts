@@ -7,6 +7,39 @@ export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayP
 export const formatJSONResponse = (response: Record<string, unknown>) => {
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
     body: JSON.stringify(response)
   }
+}
+
+export const formatJSONErrorResponse = (response: string, statusError: number) => {
+  if (statusError == 404){
+    return {
+      statusCode: statusError,
+      headers: {
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
+      body: JSON.stringify({message: `Product Id ${response} not found`}),
+    }
+  }else{
+    return {
+      statusCode: 520,
+      headers: {
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
+      body: JSON.stringify({message: `Unknow error`}),
+    }
+  }
+
 }

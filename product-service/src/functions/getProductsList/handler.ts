@@ -8,7 +8,7 @@ import * as productData from '../../data/products.json';
 
 const getProductsList = async (event) => {
   return formatJSONResponse({
-    product: productData.products,
+    product: productData,
   });
 }
 
