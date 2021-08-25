@@ -4,13 +4,14 @@ import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 
-import schema from './schema';
+import * as productData from '../../data/products.json';
 
-const hello: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const getProductsList = async (event) => {
+  console.log("my from task3:", productData);
   return formatJSONResponse({
-    message: `Hello ${event.body.name}, welcome to the exciting Serverless world!`,
+    product: productData.products,
     event,
   });
 }
 
-export const main = middyfy(hello);
+export const main = middyfy(getProductsList);
