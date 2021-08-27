@@ -7,9 +7,7 @@ import { middyfy } from '@libs/lambda';
 import * as productData from '../../data/products.json';
 
 const getProductsList = async (event) => {
-  return formatJSONResponse({
-    product: productData,
-  });
+  return formatJSONResponse(productData.default);
 }
 
 export const main = middyfy(getProductsList);
