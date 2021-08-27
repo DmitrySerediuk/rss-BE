@@ -12,9 +12,7 @@ const getProductsById = async (event) => {
   const productData = productsData.find (prod => prod.id == productId)
 
   if (productData){
-    return formatJSONResponse({
-      product: productData,
-    });    
+    return formatJSONResponse(productData);    
   }else{
     return formatJSONErrorResponse(productId, 404);
   }
