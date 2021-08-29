@@ -6,7 +6,6 @@ describe('getProductsList', () => {
 
   it('Return correct status code', async() => {
       const data = await getProductsList();
-      //console.log(data);
       expect(data.statusCode).toEqual(200);
   });
 

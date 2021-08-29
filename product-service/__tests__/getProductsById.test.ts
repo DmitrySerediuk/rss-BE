@@ -1,6 +1,4 @@
-
 import {getProductsById} from '../src/functions/getProductsById/handler';
-
 
 describe('getProductsById', () => {
 
@@ -18,7 +16,6 @@ describe('getProductsById', () => {
 
   it('Return correct status code 200', async() => {
       const data = await getProductsById(productIdObj);
-      console.log(data);
       expect(data.statusCode).toEqual(200);
   });
 
@@ -34,7 +31,6 @@ describe('getProductsById', () => {
 
 it('Return status code 404 if wrong id', async() => {
   const data = await getProductsById(wrondProductIdObj);
-  console.log(data);
   expect(data.statusCode).toEqual(404);
 });
 
