@@ -3,12 +3,11 @@ import 'source-map-support/register';
 import { formatJSONResponse, formatJSONErrorResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 
-import {getAllProducts} from '../../data/productMock';
+import { getDataProductByid } from '@models/getDataProductByid';
 
 export const getProductsById = async (event) => {
   const productId = event.pathParameters.productId;
-  const productsData = await getAllProducts();
-  const productData = productsData.find (prod => prod.id == productId);
+  const productData = await getDataProductByid(productId);
 
   if (productData){
     return formatJSONResponse(productData);    

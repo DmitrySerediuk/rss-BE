@@ -13,7 +13,6 @@ const dbOptions = {
   },
   connectionTimeoutMillis: 5000,
 };
-console.log(dbOptions);
 const client = new Client(dbOptions);
 
 export {client}
