@@ -7,6 +7,7 @@ import getProductsById from '@functions/getProductsById';
 const serverlessConfiguration: AWS = {
   service: 'product-service',
   frameworkVersion: '2',
+  useDotenv: true,
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
@@ -28,6 +29,11 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      DB_HOST: '${env:DB_HOST}',
+      DB_PORT: '${env:DB_PORT}',
+      DB_BASE: '${env:DB_BASE}',
+      DB_USER: '${env:DB_USER}',
+      DB_PWD: '${env:DB_PWD}',
     },
     lambdaHashingVersion: '20201221',
   },
