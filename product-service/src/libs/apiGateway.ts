@@ -31,14 +31,14 @@ export const formatJSONErrorResponse = (response: string, statusError: number) =
     }
   }else{
     return {
-      statusCode: 520,
+      statusCode: statusError,
       headers: {
         'Access-Control-Allow-Headers': '*',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({message: `Unknow error`}),
+      body: JSON.stringify({message: response}),
     }
   }
 

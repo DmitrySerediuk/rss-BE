@@ -15,4 +15,5 @@ const dbOptions = {
 };
 const client = new Client(dbOptions);
 
+
 export {client}
