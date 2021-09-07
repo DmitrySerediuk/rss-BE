@@ -1,7 +1,7 @@
 import { client } from './newClient';
 
 import { dbTables } from './dbTables';
-import { httpStatus } from './httpStatus';
+import { httpStatus } from '@libs/httpStatus';
 import { ConsoleWriter } from 'istanbul-lib-report';
 
 
