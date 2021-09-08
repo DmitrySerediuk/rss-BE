@@ -17,7 +17,15 @@ const getAllProducts = async () => {
     }
 
     try{
-        let sql = "SELECT * FROM "+dbTables.PRODUCTS+" FULL OUTER JOIN "+dbTables.STOCKS+" ON "+dbTables.PRODUCTS+".id = "+dbTables.STOCKS+".product_id;";
+        let sql = `SELECT  
+                        product.id AS "id",
+                        product.title AS "title",
+                        product.description AS "description", 
+                        product.price AS "price", 
+                        stock.count AS "count"  
+                    FROM ${dbTables.PRODUCTS} product FULL OUTER JOIN ${dbTables.STOCKS} stock ON product.id = stock.product_id`;
+
+        
         const listProducts = await client.query(sql);
         return listProducts.rows;
     }catch(err){

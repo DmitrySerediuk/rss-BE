@@ -15,7 +15,14 @@ const getDataProductByid = async (id) => {
     }
 
     let query = {
-        text: `SELECT * FROM ${dbTables.PRODUCTS} FULL OUTER JOIN ${dbTables.STOCKS} ON ${dbTables.PRODUCTS}.id = ${dbTables.STOCKS}.product_id WHERE ${dbTables.PRODUCTS}.id = $1`,
+        text: ` SELECT  
+                    product.id AS "id",
+                    product.title AS "title",
+                    product.description AS "description", 
+                    product.price AS "price", 
+                    stock.count AS "count"  
+                FROM ${dbTables.PRODUCTS} product FULL OUTER JOIN ${dbTables.STOCKS} stock ON product.id = stock.product_id 
+                WHERE product.id = $1`,
         values: [id],
     }
     
