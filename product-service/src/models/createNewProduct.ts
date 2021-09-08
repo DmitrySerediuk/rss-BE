@@ -1,16 +1,16 @@
-import { client } from './newClient';
+import { Client } from 'pg';
+import { dbOptions } from './dbOptions';
 
 import { dbTables } from './dbTables';
 import { httpStatus } from '@libs/httpStatus';
-import { ConsoleWriter } from 'istanbul-lib-report';
 
 
 const createNewProduct = async (title, description, price, count) => {
+    const client = new Client(dbOptions);
     try{
-       // console.log(client);
         await client.connect();
     }catch(err){
-        console.error("Error during db connection", err);
+        console.log("Error during db connection", err);
         client.end();
         return {status:httpStatus.SERVER_ERROR, message: "Error during db connection"};
     }
@@ -18,19 +18,18 @@ const createNewProduct = async (title, description, price, count) => {
     try {
         await client.query('BEGIN')
         let query = {
-            text: `INSERT INTO ${dbTables.PRODUCTS}(title, description, price) VALUES ('$1', '$2', $3) RETURNING id;`,
+            text: `INSERT INTO ${dbTables.PRODUCTS}(title, description, price) VALUES ($1, $2, $3) RETURNING id;`,
             values: [title, description, price],
         }
 
-        console.log(query); 
         const id = await client.query(query);
-        console.log(id.rows[0].id);
+
         if (count != 'undefined'){
             query = {
                 text: `INSERT INTO ${dbTables.STOCKS}(product_id, count) VALUES ($1, $2)`,
                 values: [id.rows[0].id, count],
             }
-            console.log(query); 
+            
             await client.query(query);
         }
       

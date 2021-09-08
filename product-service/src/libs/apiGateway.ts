@@ -4,42 +4,28 @@ import type { FromSchema } from "json-schema-to-ts";
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> }
 export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>
 
-export const formatJSONResponse = (response) => {
+// export const formatJSONResponse = (response) => {
+//   return {
+//     statusCode: 200,
+//     headers: {
+//       'Access-Control-Allow-Headers': '*',
+//       'Access-Control-Allow-Origin': '*',
+//       'Access-Control-Allow-Methods': '*',
+//       'Access-Control-Allow-Credentials': true,
+//     },
+//     body: JSON.stringify(response)
+//   }
+// }
+
+export const formatJSONResponse = (response: string, statusCode: number) => {
   return {
-    statusCode: 200,
+    statusCode: statusCode,
     headers: {
       'Access-Control-Allow-Headers': '*',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': '*',
       'Access-Control-Allow-Credentials': true,
     },
-    body: JSON.stringify(response)
+    body: JSON.stringify({message: response}),
   }
-}
-
-export const formatJSONErrorResponse = (response: string, statusError: number) => {
-  if (statusError == 404){
-    return {
-      statusCode: statusError,
-      headers: {
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': '*',
-        'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify({message: `Product Id ${response} not found`}),
-    }
-  }else{
-    return {
-      statusCode: statusError,
-      headers: {
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': '*',
-        'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify({message: response}),
-    }
-  }
-
 }

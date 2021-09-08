@@ -1,6 +1,5 @@
-import { Client } from 'pg';
-
 const {DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PWD} = process.env;
+
 
 const dbOptions = {
   host: DB_HOST,
@@ -13,7 +12,5 @@ const dbOptions = {
   },
   connectionTimeoutMillis: 5000,
 };
-const client = new Client(dbOptions);
 
-
-export {client}
+export {dbOptions}

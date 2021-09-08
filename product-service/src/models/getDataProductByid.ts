@@ -1,12 +1,15 @@
-import { client } from './newClient';
+import { Client } from 'pg';
+
+import { dbOptions } from './dbOptions';
 import { httpStatus } from '@libs/httpStatus';
 import { dbTables } from './dbTables';
 
 const getDataProductByid = async (id) => {
+    const client = new Client(dbOptions);
     try{
         await client.connect();
     }catch(err){
-        console.error("Error during db connection", err);
+        console.log("Error during db connection", err);
         client.end();
         return {status:httpStatus.SERVER_ERROR, message: "Error during db connection"};
     }
@@ -20,7 +23,6 @@ const getDataProductByid = async (id) => {
         const listProducts = await client.query(query);
         return listProducts.rows;
     }catch(err){
-        console.error("Error during db request", err)
         return {status:httpStatus.SERVER_ERROR, message: "Error during db request"};
     }finally{
         client.end();

@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 
-import { formatJSONResponse, formatJSONErrorResponse } from '@libs/apiGateway';
+import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import { httpStatus } from '@libs/httpStatus';
 import { getAllProducts } from '@models/getAllProducts';
@@ -11,11 +11,10 @@ export const getProductsList = async (event) => {
   try{
       logging('getProductsList', event);
       const productsData = await getAllProducts();
-      return formatJSONResponse(productsData);
+      return formatJSONResponse(productsData, httpStatus.OK);
   }catch(err){
       const errorMessage = "Error during getProductsList function execution";
-      console.error(errorMessage, err);
-      return formatJSONErrorResponse(errorMessage, httpStatus.SERVER_ERROR);
+      return formatJSONResponse(errorMessage, httpStatus.SERVER_ERROR);
   }
   
 }
