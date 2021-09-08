@@ -16,5 +16,5 @@ export default {
         minimum: 0
       }
   },
-  required: ['title', 'description', 'price']
+  required: ['title']
 } as const;
