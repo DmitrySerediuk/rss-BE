@@ -24,12 +24,12 @@ const createNewProduct = async (title, description, price, count) => {
 
         const id = await client.query(query);
 
-        if (count != 'undefined'){
+        if (count != undefined){
             query = {
                 text: `INSERT INTO ${dbTables.STOCKS}(product_id, count) VALUES ($1, $2)`,
                 values: [id.rows[0].id, count],
             }
-            
+
             await client.query(query);
         }
       
