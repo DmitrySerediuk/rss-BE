@@ -1,18 +1,26 @@
 import 'source-map-support/register';
-import { S3 } from 'aws-sdk';
-import {httpStatus} from "../../../../libs/httpStatus";
+import * as AWS from 'aws-sdk';
+import {httpStatus} from "@libs/httpStatus";
 
-const {BUCKET} = process.env;
 
-import { formatJSONResponse } from '../../../../libs/apiGateway';
-import { middyfy } from '../../../../libs/lambda';
 
-const importProductsFile = async (event) => {
+import { formatJSONResponse } from '@libs/apiGateway';
+import { middyfy } from '@libs/lambda';
+import {UPLOAD_DIR} from '@config/settings';
+
+export const importProductsFile = async (event) => {
+
+  const {BUCKET} = process.env;
+
   try {
-    console.log(event);
-    const dirName = event.queryStringParameters.name;
+    
+    if (!event.queryStringParameters.name) {
+      return formatJSONResponse('BAD REQUEST', httpStatus.BAD_REQUEST);
+    }
 
-    const dirPath = `uploaded/${dirName}`;
+    const dirName = event.queryStringParameters.name;
+    
+    const dirPath = `${UPLOAD_DIR}/${dirName}`;
 
     const params = {
         Bucket: BUCKET,
@@ -20,10 +28,8 @@ const importProductsFile = async (event) => {
         Expires: 60,
         ContentType: 'text/csv'
     };
-
-    const s3 = new S3({region: 'eu-west-1'});
+    const s3 = new AWS.S3({region: 'eu-west-1'});
     const url = await s3.getSignedUrlPromise('putObject', params)
-
     return formatJSONResponse(url, httpStatus.OK);
   } catch (error) {
     return formatJSONResponse(error, httpStatus.SERVER_ERROR);
