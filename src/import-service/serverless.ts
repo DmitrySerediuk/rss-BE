@@ -1,9 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-//import hello from '@functions/importProductsFile';
 
-
-//import hello from '@functions/hello';
 import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
 
@@ -41,17 +38,6 @@ const serverlessConfiguration: AWS = {
         Resource: ['arn:aws:s3:::rss-app-upload/*'],
       },
 
-      // {
-      //   Effect: 'Allow',
-      //   Action: ['sqs:*'],
-      //   Resource: [{"Fn::GetAtt": [ 'SQSQueue', 'Arn' ]},],
-      // },
-
-      // {
-      //   Effect: 'Allow',
-      //   Action: ['sns:*'],
-      //   Resource: [{"Ref": "SNSTopic"},],
-      // },
     ],
 
     apiGateway: {
