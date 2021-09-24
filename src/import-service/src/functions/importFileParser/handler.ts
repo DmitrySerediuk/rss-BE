@@ -41,6 +41,7 @@ const importFileParser = async (event) => {
 
           console.log(`Copied into ${BUCKET}/${record.s3.object.key.replace(UPLOAD_DIR, PARSED_DIR)}`);
 
+          
           await s3.deleteObject({
             Bucket: BUCKET,
             Key: record.s3.object.key,
