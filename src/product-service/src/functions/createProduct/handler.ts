@@ -1,7 +1,7 @@
 import 'source-map-support/register';
-import type { ValidatedEventAPIGatewayProxyEvent } from '@common/apiGateway';
-import { formatJSONResponse, formatJSONErrorResponse } from '@common/apiGateway';
-import { middyfy } from '@common/lambda';
+import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
+import { formatJSONResponse, formatJSONErrorResponse } from '@libs/apiGateway';
+import { middyfy } from '@libs/lambda';
 
 import schema from './schema';
 import { createNewProduct } from '@models/createNewProduct';
