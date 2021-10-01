@@ -1,5 +1,5 @@
 import 'source-map-support/register';
-import { S3 } from 'aws-sdk';
+import { S3, SQS } from 'aws-sdk';
 import {httpStatus} from "@libs/httpStatus";
 
 import csv from 'csv-parser';
@@ -14,6 +14,7 @@ const importFileParser = async (event) => {
 
   try {
     const s3 = new S3({region: 'eu-west-1'});
+    const sqs = new SQS({region: 'eu-west-1'});
 
     event.Records.forEach(async (record) => {
       
@@ -26,6 +27,12 @@ const importFileParser = async (event) => {
       s3Stream.pipe(csv())
         .on('data', (data) => {
           console.log(data);
+          sqs.sendMessage({
+            QueueUrl: process.env.SQS_URL,
+            MessageBody: JSON.stringify(data),
+          }, () => {
+            console.log(`Send data ${data.title} to SQS`);
+          });
         })
         .on('error', () => {
           throw new Error('Error occurred during csv parser');
@@ -41,7 +48,7 @@ const importFileParser = async (event) => {
 
           console.log(`Copied into ${BUCKET}/${record.s3.object.key.replace(UPLOAD_DIR, PARSED_DIR)}`);
 
-          
+
           await s3.deleteObject({
             Bucket: BUCKET,
             Key: record.s3.object.key,

@@ -1,8 +1,6 @@
 import { handlerPath } from '@libs/handlerResolver';
 import {BUCKET, UPLOAD_DIR} from '@config/settings';
 
-// console.log(env)
-console.log(BUCKET)
 
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
