@@ -4,18 +4,21 @@ import {httpStatus} from "@libs/httpStatus";
 import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 
-const catalogBatchProcess = async (event) => {
+import {createNewProduct} from '../../../../product-service/src/models/createNewProduct';
+
+export const catalogBatchProcess = async (event) => {
 
   try {
-    console.log(event.Records);
-
     for (const record of event.Records) {
       const messages = JSON.parse(record.body);
 
       const sns = new SNS({region: 'eu-west-1'});
       const typePrice = (messages.price > process.env.LOW_PRICE_LIMIT) ? process.env.HIGHT_PRICE : process.env.LOW_PRICE
-      console.log(messages, typePrice);
-      
+
+      const {title, description, price, count} = messages;
+   
+      const resultCreateProduct = await createNewProduct(title, description, price, count);
+
       sns.publish({
         Subject: `Product ${messages.title} added to db. Send ${typePrice} notification`,
         Message: JSON.stringify(messages),
@@ -29,6 +32,8 @@ const catalogBatchProcess = async (event) => {
       }, () => {
         console.log("Send email with items");
       });
+
+      console.log(resultCreateProduct);
     }
     
     

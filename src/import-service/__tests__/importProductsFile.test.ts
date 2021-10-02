@@ -4,12 +4,9 @@ import {BUCKET} from '@config/settings';
 import * as AWSMock from 'aws-sdk-mock';
 import {httpStatus} from "@libs/httpStatus";
 
+
 describe('importProductsFile', () => {
   process.env.BUCKET = BUCKET;
-
-  afterEach(() => {
-    
-  });
 
   it('should return signed url', async () => {
 
