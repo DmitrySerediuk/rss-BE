@@ -3,7 +3,10 @@ import type { AWS } from '@serverless/typescript';
 
 import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
-import catalogBatchProcess from '@functions/catalogBatchProcess';
+
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
@@ -41,17 +44,11 @@ const serverlessConfiguration: AWS = {
       },
 
       {
-        Effect: 'Allow',
-        Action: ['sqs:*'],
-        Resource: { 'Fn::GetAtt': ['SQSQueue', 'Arn'] }, 
+        Effect: "Allow",
+        Action: "sqs:*",
+        Resource: `\${cf:${process.env.PRODUCT_SERVICE}-\${self:provider.stage}.SQSQueueArn}`,
       },
-
-      {
-        Effect: 'Allow',
-        Action: ['sns:*'],
-        Resource: { Ref: 'SNSTopic' },
-      },
-
+      
     ],
 
     apiGateway: {
@@ -59,77 +56,19 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
-      DB_HOST: '${env:DB_HOST}',
-      DB_PORT: '${env:DB_PORT}',
-      DB_BASE: '${env:DB_BASE}',
-      DB_USER: '${env:DB_USER}',
-      DB_PWD: '${env:DB_PWD}',
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       BUCKET: '${env:BUCKET}',
-      SQSQueueName: '${env:SQSQueueName}',
-      BATCH_SQS_SIZE: process.env.BATCH_SQS_SIZE,
-      SQS_URL : {
-        Ref: "SQSQueue"
-      },
-      SNS_ARN : {
-        Ref: "SNSTopic"
-      }
+      SQS_URL: `\${cf:${process.env.PRODUCT_SERVICE}-\${self:provider.stage}.SQSQueueLink}`,
+      // SQS_URL : { "Fn::ImportValue": 'product-service-SQSQueueLinkExport'},
     },
     lambdaHashingVersion: '20201221',
   },
 
-  resources: {
-    Resources: {
-      SQSQueue: {     
-        Type: "AWS::SQS::Queue",
-        Properties: {
-          QueueName: '${env:SQSQueueName}',
-        },
-      },
-
-      SNSTopic: {
-        Type: "AWS::SNS::Topic",
-        Properties: {
-          TopicName: '${env:SNSTopicName}',
-        },
-      },
-
-  
-      SNSSubscriptionLowPrice: {
-        Type: "AWS::SNS::Subscription",
-        Properties: {
-          Endpoint: "${env:SNS_MAIL_LOW}",
-          Protocol: "email",
-          TopicArn: {
-            Ref: "SNSTopic",
-          },
-          FilterPolicy: {
-            Price: ["${env:LOW_PRICE}"]
-          }
-        },
-      }, 
-      
-      SNSSubscriptionHightPrice: {
-        Type: "AWS::SNS::Subscription",
-        Properties: {
-          Endpoint: "${env:SNS_MAIL_HIGHT}",
-          Protocol: "email",
-          TopicArn: {
-            Ref: "SNSTopic",
-          },
-          FilterPolicy: {
-            Price: ["${env:HIGHT_PRICE}"]
-          }
-        },
-      },
-    },
-  },
-
+ 
   // import the function via paths
   functions: { 
     importFileParser, 
-    importProductsFile,
-    catalogBatchProcess
+    importProductsFile
   },
 };
 

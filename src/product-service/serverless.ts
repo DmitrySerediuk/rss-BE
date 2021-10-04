@@ -4,6 +4,7 @@ import type { AWS } from '@serverless/typescript';
 import getProductsList from '@functions/getProductsList';
 import getProductsById from '@functions/getProductsById';
 import createProduct from '@functions/createProduct';
+import catalogBatchProcess from '@functions/catalogBatchProcess';
 
 
 const serverlessConfiguration: AWS = {
@@ -36,11 +37,107 @@ const serverlessConfiguration: AWS = {
       DB_BASE: '${env:DB_BASE}',
       DB_USER: '${env:DB_USER}',
       DB_PWD: '${env:DB_PWD}',
+      BUCKET: '${env:BUCKET}',
+
+      LOW_PRICE_LIMIT: '${env:LOW_PRICE_LIMIT}',
+      HIGHT_PRICE: '${env:HIGHT_PRICE}',
+      LOW_PRICE: '${env:LOW_PRICE}',
+
+      SQSQueueName: '${env:SQSQueueName}',
+      SNSTopicName: '${env:SNSTopicName}',
+
+      BATCH_SQS_SIZE: '${env:BATCH_SQS_SIZE}',
+      SQS_URL : {
+        Ref: "SQSQueue"
+      },
+      SNS_ARN : {
+        Ref: "SNSTopic"
+      }
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: ['sqs:*'],
+        Resource: { 'Fn::GetAtt': ['SQSQueue', 'Arn'] }, 
+      },
+
+      {
+        Effect: 'Allow',
+        Action: ['sns:*'],
+        Resource: { Ref: 'SNSTopic' },
+      },
+    ],
     lambdaHashingVersion: '20201221',
   },
+
+  resources: {
+    Resources: {
+      SQSQueue: {     
+        Type: "AWS::SQS::Queue",
+        Properties: {
+          QueueName: '${env:SQSQueueName}',
+        },
+      },
+
+      SNSTopic: {
+        Type: "AWS::SNS::Topic",
+        Properties: {
+          TopicName: '${env:SNSTopicName}',
+        },
+      },
+
+  
+      SNSSubscriptionLowPrice: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "${env:SNS_MAIL_LOW}",
+          Protocol: "email",
+          TopicArn: {
+            Ref: "SNSTopic",
+          },
+          FilterPolicy: {
+            Price: ["${env:LOW_PRICE}"]
+          }
+        },
+      }, 
+      
+      SNSSubscriptionHightPrice: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "${env:SNS_MAIL_HIGHT}",
+          Protocol: "email",
+          TopicArn: {
+            Ref: "SNSTopic",
+          },
+          FilterPolicy: {
+            Price: ["${env:HIGHT_PRICE}"]
+          }
+        },
+      },
+    },
+
+    Outputs: {
+      SQSQueueLink: {
+        Value: {
+          Ref: 'SQSQueue',
+        },
+      },
+      SQSQueueArn: {
+        Value: {
+          'Fn::GetAtt': ['SQSQueue', 'Arn'],
+        },
+      }
+    },
+  },
+
+
   // import the function via paths
-  functions: { getProductsList, getProductsById, createProduct },
+  functions: { 
+    getProductsList, 
+    getProductsById, 
+    createProduct,
+    catalogBatchProcess,
+  },
 };
 
 module.exports = serverlessConfiguration;
