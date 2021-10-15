@@ -1,7 +1,7 @@
 import {catalogBatchProcess} from '../src/functions/catalogBatchProcess/handler';
 
 jest.mock('../../product-service/src/models/createNewProduct');
-import {createNewProduct} from '../../product-service/src/models/createNewProduct';
+import {createNewProduct} from '../src/models/createNewProduct';
 
 import {httpStatus} from "@libs/httpStatus";
 

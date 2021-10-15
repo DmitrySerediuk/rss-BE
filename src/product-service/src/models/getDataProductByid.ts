@@ -1,7 +1,7 @@
 import { Client } from 'pg';
 
 import { dbOptions } from './dbOptions';
-import { httpStatus } from '@libs/httpStatus';
+import { httpStatus } from '../libs/httpStatus';
 import { dbTables } from './dbTables';
 
 const getDataProductByid = async (id) => {
