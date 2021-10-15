@@ -8,6 +8,21 @@ import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import {UPLOAD_DIR} from '@config/settings';
 
+export const test = (event, context, callback) => {
+  const body = {
+      message: 'Successs - Profile Retrieved!',
+      input: event,
+  };
+
+  const response = {
+      statusCode: 200,
+      body: JSON.stringify(body),
+  };
+
+  callback(null, response);
+};
+
+
 export const importProductsFile = async (event) => {
 
   const {BUCKET} = process.env;

@@ -59,7 +59,6 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       BUCKET: '${env:BUCKET}',
       SQS_URL: `\${cf:${process.env.PRODUCT_SERVICE}-\${self:provider.stage}.SQSQueueLink}`,
-      // SQS_URL : { "Fn::ImportValue": 'product-service-SQSQueueLinkExport'},
     },
     lambdaHashingVersion: '20201221',
   },
@@ -68,8 +67,42 @@ const serverlessConfiguration: AWS = {
   // import the function via paths
   functions: { 
     importFileParser, 
-    importProductsFile
+    importProductsFile,
   },
+
+  resources:{
+    Resources: {
+
+      GatewayResponseAccessDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'ACCESS_DENIED',
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+        }
+      },
+
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'DEFAULT_4XX',
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+        }
+      }
+
+    }
+  }
 };
 
 module.exports = serverlessConfiguration;
