@@ -5,7 +5,7 @@ const axios = require('axios').default;
 const cors = require('cors');
 
 const PORT = process.env.PORT || 3000;
-const productCacheUrl = '/product/products'
+const productCacheTemplate = /^\/product\/products\/?$/
 
 const app = express()
 
@@ -20,17 +20,19 @@ class Cache{
         this.ttl = ttl;
         this.status = null;
         this.data = null;
-        this.expiredData = false;
+        this.expiredDate = false;
+        this.expiredDateUser = false
     }
 
     setCachedData(status, message){
         this.status = status;
         this.data = message;
-        this.expiredData = Date.now()+this.ttl*1000;
+        this.expiredDate = Date.now()+(this.ttl*1000);
+        this.expiredDateUser = new Date(new Date().getTime() + (120 * 1000)).toISOString();
     }
 
     isExpired(){
-        return (!this.expiredData || this.expiredData <= Date.now()) ? true : false;
+        return (!this.expiredDate || this.expiredDate <= Date.now()) ? true : false;
     }
 
     getCachedData(){
@@ -51,11 +53,14 @@ app.all('/*', async(req, res) => {
         const urlQuery = `${serviceUrl}/${dataUrl.slice(2).join('/')}`;
 
         try{
-            let useCache = (req.url == productCacheUrl)
+            let useCache = productCacheTemplate.test(req.url)
 
+            let cacheIsExp = cache.isExpired()
             if (useCache && !cache.isExpired()){
                 status = cache.getCachedData().status
                 message = cache.getCachedData().data 
+                message.type = 'cache'
+ 
                 console.log("get data from cache")
             }else{
                 let responceApi = await axios({
@@ -66,15 +71,19 @@ app.all('/*', async(req, res) => {
 
                 status = responceApi.status
                 message = responceApi.data
-                
+                message.type = 'original'
+
                 if (useCache){
+                    
                     cache.setCachedData(status, message)
                     console.log("send data to cache")
                 }
                
             }
+            message.currentDate = new Date().toISOString();
+            message.expiredCacheDate = cache.getCachedData().expiredDateUser 
         }catch(err){
-            // console.log(err)
+            console.log(err)
             status = err.response.status
             message = err.message
             
