@@ -1,0 +1,10 @@
+node_modules
+jspm_packages
+coverage
+
+# Serverless directories
+.serverless
+.env
+
+# Webpack directories
+.webpack
